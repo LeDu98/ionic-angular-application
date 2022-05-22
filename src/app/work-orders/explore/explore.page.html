@@ -1,0 +1,29 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-menu-button></ion-menu-button>
+
+    </ion-buttons>
+    <ion-title>work-orders</ion-title>
+    <ion-buttons slot="end">
+      <ion-fab-button size="small" color="tertiary" (click)="openModal()">
+        <ion-icon name="add"></ion-icon>
+      </ion-fab-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+
+  <ion-list>
+    <app-work-order-element *ngFor="let workOrder of workOrders" [workOrder]="workOrder" [routerLink]="['/', 'work-orders','tabs', 'explore', workOrder.id]">
+
+    </app-work-order-element>
+  </ion-list>
+
+  <ion-buttons class="ion-justify-content-center">
+    <ion-button routerLink="/work-orders" color="tertiary" fill="solid">
+      Work orders
+    </ion-button>
+  </ion-buttons>
+</ion-content>
