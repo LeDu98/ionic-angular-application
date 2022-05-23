@@ -3,14 +3,14 @@ import {WorkOrder} from "./work-order.model";
 
 import {HttpClient, HttpClientModule} from "@angular/common/http";
 import {BehaviorSubject} from "rxjs";
-import {Worker} from "../my-profile/worker.model";
+
 import {map, switchMap, take, tap} from "rxjs/operators";
+import {AuthService} from "../auth/auth.service";
 
 interface WorkOrderData{
-  id: string;
   title: string;
   description: string;
-  workerId: string;
+  userId: string;
 }
 
 @Injectable({
@@ -20,7 +20,6 @@ export class WorkOrdersService {
 
   private url=`https://work-orders-8e95b-default-rtdb.europe-west1.firebasedatabase.app/work-orders`;
   private _workOrders=new BehaviorSubject<WorkOrder[]>([]);
-  private worker: Worker;
   private listOfWorkOrders: WorkOrder[];
 
 
@@ -31,48 +30,49 @@ export class WorkOrdersService {
     {id: 'wo4', description: 'work order description 4', worker: 'Mihajlo Mihajlovic'},
     {id: 'wo5', description: 'work order description 5', worker: 'Marko Markovic'}];
 */
-  constructor(private http: HttpClient) { }
+  constructor(private http: HttpClient, private authService: AuthService) { }
 
   get workOrders(){
     return this._workOrders.asObservable();
   }
 
-  addWorkOrder(workerId: string,title: string, description: string){
-    let generatedId
+  addWorkOrder(title: string, description: string){
+    let generatedId;
+    let newWorkOrder: WorkOrder;
 
-   return this.http.post<{name: string}>(`https://work-orders-8e95b-default-rtdb.europe-west1.firebasedatabase.app/work-orders.json`,{
-      workerId,
+    return this.authService.userId.pipe(
+      take(1),switchMap(userId=>{
+    newWorkOrder=new WorkOrder(
+      null,
       title,
-      description
+      description,
+      userId);
+        return this.http.post<{name: string}>(`https://work-orders-8e95b-default-rtdb.europe-west1.firebasedatabase.app/work-orders.json`,newWorkOrder);
+      }),
+      take(1),
+      switchMap((resData)=>{
+        generatedId=resData.name;
+        return this.workOrders;
 
-    }).pipe(switchMap((resData)=>{
-      generatedId=resData.name;
-      return this.workOrders;
+      }),
+      take(1),tap(
 
-   }),take(1),tap((workOrders)=>{
-     this._workOrders.next(workOrders.concat({
-       id: generatedId,
-       workerId,
-       title,
-       description
+        (workOrders)=> {
+          newWorkOrder.id = generatedId;
+          this._workOrders.next(workOrders.concat(newWorkOrder));
+        }));
 
-     }));
-   }));
   }
 
   getWorkOrders(){
+
     return this.http.get<{[key: string]: WorkOrderData}>(this.url+`.json`)
       .pipe(map((workOrdersData)=>{
         const workOrders: WorkOrder[]=[];
 
         for(const key in workOrdersData){
           if(workOrdersData.hasOwnProperty(key)){
-            workOrders.push({
-              id: key,
-              workerId: workOrdersData[key].workerId,
-              title: workOrdersData[key].title,
-              description: workOrdersData[key].description
-            });
+            workOrders.push(new WorkOrder(key,workOrdersData[key].title,workOrdersData[key].description,workOrdersData[key].userId));
           }
         }
         this._workOrders.next(workOrders);
@@ -80,7 +80,14 @@ export class WorkOrdersService {
       }));
   }
 
-  getWorkOrder(id: string):WorkOrder{
+  deleteWorkOrder(id: string){
+
+
+    console.log(id);
+    return this.http.delete(`https://work-orders-8e95b-default-rtdb.europe-west1.firebasedatabase.app/work-orders/` + id + `.json`);
+  }
+
+  getWorkOrder(id: string): WorkOrder{
    return this.listOfWorkOrders.find(wo=>wo.id===id);
   }
 

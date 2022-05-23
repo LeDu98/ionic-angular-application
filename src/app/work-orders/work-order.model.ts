@@ -1,7 +1,5 @@
-export interface WorkOrder {
+export class WorkOrder {
 
-  id: string;
-  title: string;
-  description: string;
-  workerId: string;
+  constructor(public id: string, public title: string, public description: string, public userId: string) {
+  }
 }

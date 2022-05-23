@@ -13,6 +13,10 @@ const routes: Routes = [
         loadChildren: () => import('./explore/explore.module').then( m => m.ExplorePageModule)
       },
       {
+        path: 'my-profile',
+        loadChildren: () => import('./my-profile/my-profile.module').then( m => m.MyProfilePageModule)
+      },
+      {
         path: '',
         redirectTo: '/work-orders/tabs/explore',
         pathMatch: 'full'
@@ -24,6 +28,7 @@ const routes: Routes = [
     redirectTo: '/work-orders/tabs/explore',
     pathMatch: 'full'
   }
+
 
 ];
 

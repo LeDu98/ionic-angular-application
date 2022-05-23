@@ -4,7 +4,7 @@
       <ion-menu-button></ion-menu-button>
 
     </ion-buttons>
-    <ion-title>work-orders</ion-title>
+    <ion-title>Work orders</ion-title>
     <ion-buttons slot="end">
       <ion-fab-button size="small" color="tertiary" (click)="openModal()">
         <ion-icon name="add"></ion-icon>
@@ -16,9 +16,15 @@
 <ion-content>
 
   <ion-list>
-    <app-work-order-element *ngFor="let workOrder of workOrders" [workOrder]="workOrder" [routerLink]="['/', 'work-orders','tabs', 'explore', workOrder.id]">
+    <app-element *ngFor="let workOrder of workOrders" [routerLink]="['/', 'work-orders','tabs', 'explore', workOrder.id]">
+      <ion-item *ngIf="userId===workOrder.userId">
+        <ion-avatar slot="start">
+          <ion-icon name="document"></ion-icon>
+        </ion-avatar>
+        <ion-label>{{workOrder.title}}</ion-label>
 
-    </app-work-order-element>
+      </ion-item>
+    </app-element>
   </ion-list>
 
   <ion-buttons class="ion-justify-content-center">

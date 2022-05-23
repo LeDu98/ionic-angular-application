@@ -18,8 +18,12 @@ export class LogInPage implements OnInit {
 
   onLogIn(form: NgForm){
     console.log(form);
-    //this.authService.logIn();
-    //this.router.navigateByUrl("work-orders/tabs/explore");
+    this.authService.logIn(form.value).subscribe(resData=>{
+      console.log('Prijava uspesna');
+      console.log(resData);
+      this.router.navigateByUrl("work-orders/tabs/explore");
+    });
+
   }
 
 
