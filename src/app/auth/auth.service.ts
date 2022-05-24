@@ -4,6 +4,7 @@ import {environment} from "../../environments/environment";
 import {BehaviorSubject} from "rxjs";
 import {User} from "./user.model";
 import {map, tap} from "rxjs/operators";
+import {Router} from "@angular/router";
 
 interface AuthResponseData{
   kind: string;
@@ -31,7 +32,7 @@ export class AuthService {
   private _isUserAuthenticated=false;
   private _user=new BehaviorSubject<User>(null);
 
-  constructor(private http: HttpClient) { }
+  constructor(private http: HttpClient,private router: Router) { }
 
   get isUserAuthenticated(){
     return this._user.asObservable().pipe(
@@ -89,6 +90,7 @@ export class AuthService {
   logOut(){
     console.log('logout 2');
     this._user.next(null);
+    this.router.navigateByUrl('/log-in');
   }
 
   register(user: UserData){

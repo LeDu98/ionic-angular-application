@@ -6,12 +6,13 @@ const routes: Routes = [
   {
     path: 'work-orders',
     loadChildren: () => import('./work-orders/work-orders.module').then( m => m.WorkOrdersPageModule),
-    //canLoad:[AuthGuard]
+    canLoad:[AuthGuard]
   },
   {
     path: '',
     redirectTo: 'work-orders',
-    pathMatch: 'full'
+    pathMatch: 'full',
+    canLoad:[AuthGuard]
   },
   {
     path: 'log-in',

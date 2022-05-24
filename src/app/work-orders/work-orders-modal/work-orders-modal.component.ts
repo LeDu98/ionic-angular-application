@@ -24,9 +24,9 @@ export class WorkOrdersModalComponent implements OnInit {
     return;
   }
   this.modalCtrl.dismiss({workOrderData: {
-    workerId: this.form.value['workerId'],
     title: this.form.value['title'],
-      description: this.form.value['description']
+      description: this.form.value['description'],
+
   }},
     'confirm');
   }
